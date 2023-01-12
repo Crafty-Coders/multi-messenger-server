@@ -8,9 +8,9 @@ import (
 func GetVKAuthData(code string) (map[string]interface{}, error) {
 	urlTemplate := `https://oauth.vk.com/access_token?client_id={{.client_id}}&client_secret={{.client_secret}}&redirect_uri={{.redirect_uri}}&signin&code={{.code}}&v=5.131`
 	data := map[string]interface{}{
-		"client_id":     config.VK_config.Client_id,
-		"client_secret": config.VK_config.Client_secret,
-		"redirect_uri":  config.APP_config.Front_url + "/",
+		"client_id":     config.VkConfig.ClientId,
+		"client_secret": config.VkConfig.ClientSecret,
+		"redirect_uri":  config.AppConfig.FrontUrl + "/",
 		"code":          code,
 	}
 

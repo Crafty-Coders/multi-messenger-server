@@ -62,16 +62,16 @@ func sessionRefresh(refreshToken string) map[string]interface{} {
 
 	var sessions []database.AuthSession
 
-	database.DB.Where("Refresh_token = ?", refreshToken).Limit(1).Find(&sessions)
+	database.DB.Where("RefreshToken = ?", refreshToken).Limit(1).Find(&sessions)
 
 	if len(sessions) > 0 {
 		session := sessions[0]
 		accessToken := generateToken()
 		newRefreshToken := generateToken()
 		database.DB.Model(&session).Updates(database.AuthSession{
-			Refresh_token: newRefreshToken,
-			Access_token:  accessToken,
-			Session_start: time.Now(),
+			RefreshToken: newRefreshToken,
+			AccessToken:  accessToken,
+			SessionStart: time.Now(),
 		})
 
 		return map[string]interface{}{
@@ -102,10 +102,10 @@ func sessionStart(login string, password string) map[string]interface{} {
 		accessToken := generateToken()
 		refreshToken := generateToken()
 		session := database.AuthSession{
-			Access_token:  accessToken,
-			Refresh_token: refreshToken,
-			User_id:       userId,
-			Session_start: time.Now(),
+			AccessToken:  accessToken,
+			RefreshToken: refreshToken,
+			UserId:       userId,
+			SessionStart: time.Now(),
 		}
 		database.DB.Create(&session)
 

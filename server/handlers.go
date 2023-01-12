@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func Handler_vk_auth(w http.ResponseWriter, r *http.Request) {
+func HandlerVkAuth(w http.ResponseWriter, r *http.Request) {
 	body, err := tools.ParseBody(r.Body)
 	if err != nil {
 		w.WriteHeader(tools.Bad_request)
@@ -15,18 +15,18 @@ func Handler_vk_auth(w http.ResponseWriter, r *http.Request) {
 	}
 
 	authCode := body["code"].(string)
-	auth_data, err := VK.GetVKAuthData(authCode)
+	authData, err := VK.GetVKAuthData(authCode)
 
 	if err != nil {
 		w.WriteHeader(tools.Internal_server_error)
 		return
 	}
 
-	access_token := auth_data["access_token"].(string)
+	accessToken := authData["access_token"].(string)
 	//expires := int(auth_data["expires_in"].(float64))
-	user_id := int(auth_data["user_id"].(float64))
+	userId := int(authData["user_id"].(float64))
 
-	user, err := VK.GetVkUser(access_token, user_id)
+	user, err := VK.GetVkUser(accessToken, userId)
 
 	if err != nil {
 		w.WriteHeader(tools.Bad_request)
@@ -36,7 +36,7 @@ func Handler_vk_auth(w http.ResponseWriter, r *http.Request) {
 	w.Write(tools.EncodeJson(user))
 }
 
-func Handler_login(w http.ResponseWriter, r *http.Request) {
+func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	body, err := tools.ParseBody(r.Body)
 	if err != nil {
@@ -60,7 +60,7 @@ func Handler_login(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(tools.Bad_request)
 }
 
-func Handler_register(w http.ResponseWriter, r *http.Request) {
+func HandlerRegister(w http.ResponseWriter, r *http.Request) {
 	body, err := tools.ParseBody(r.Body)
 	if err != nil {
 		w.WriteHeader(tools.Bad_request)

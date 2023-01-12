@@ -12,11 +12,11 @@ var DB *gorm.DB
 func ConnectDB() error {
 	dsnTemplate := "host={{.host}} user={{.user}} password={{.password}} dbname={{.database}} port={{.port}}"
 	data := map[string]interface{}{
-		"host":     config.DB_config.Host,
-		"user":     config.DB_config.User,
-		"password": config.DB_config.Password,
-		"database": config.DB_config.Database,
-		"port":     config.DB_config.Port,
+		"host":     config.DbConfig.Host,
+		"user":     config.DbConfig.User,
+		"password": config.DbConfig.Password,
+		"database": config.DbConfig.Database,
+		"port":     config.DbConfig.Port,
 	}
 	dsn, err := tools.GetTextFromTemplate(dsnTemplate, data)
 	if err != nil {

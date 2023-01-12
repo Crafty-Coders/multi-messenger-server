@@ -6,13 +6,13 @@ import (
 )
 
 type VKConfig struct {
-	Client_id     string
-	Client_secret string
+	ClientId     string
+	ClientSecret string
 }
 
-type AppConfig struct {
-	Server_url string
-	Front_url  string
+type APPConfig struct {
+	ServerUrl string
+	FrontUrl  string
 }
 
 type DBConfig struct {
@@ -26,14 +26,14 @@ type DBConfig struct {
 type Config struct {
 	ENV string `yaml:"ENV"`
 	VK  struct {
-		CLIENT_ID     string `yaml:"CLIENT_ID"`
-		CLIENT_SECRET string `yaml:"CLIENT_SECRET"`
+		ClientId     string `yaml:"CLIENT_ID"`
+		ClientSecret string `yaml:"CLIENT_SECRET"`
 	} `yaml:"VK"`
 	APP struct {
-		SERVER_URL_DEV  string `yaml:"SERVER_URL_DEV"`
-		SERVER_URL_PROD string `yaml:"SERVER_URL_PROD"`
-		FRONT_URL_DEV   string `yaml:"FRONT_URL_DEV"`
-		FRONT_URL_PROD  string `yaml:"FRONT_URL_PROD"`
+		ServerUrlDev  string `yaml:"SERVER_URL_DEV"`
+		ServerUrlProd string `yaml:"SERVER_URL_PROD"`
+		FrontUrlDev   string `yaml:"FRONT_URL_DEV"`
+		FrontUrlProd  string `yaml:"FRONT_URL_PROD"`
 	} `yaml:"APP"`
 	DB struct {
 		USER     string `yaml:"USER"`
@@ -46,20 +46,20 @@ type Config struct {
 
 func (config Config) getVKConfig() *VKConfig {
 	return &VKConfig{
-		config.VK.CLIENT_ID,
-		config.VK.CLIENT_SECRET,
+		config.VK.ClientId,
+		config.VK.ClientSecret,
 	}
 }
-func (config Config) getAppConfig() *AppConfig {
+func (config Config) getAppConfig() *APPConfig {
 	if config.ENV == "DEV" {
-		return &AppConfig{
-			config.APP.SERVER_URL_DEV,
-			config.APP.FRONT_URL_DEV,
+		return &APPConfig{
+			config.APP.ServerUrlDev,
+			config.APP.FrontUrlDev,
 		}
 	}
-	return &AppConfig{
-		config.APP.SERVER_URL_PROD,
-		config.APP.FRONT_URL_PROD,
+	return &APPConfig{
+		config.APP.ServerUrlProd,
+		config.APP.FrontUrlProd,
 	}
 }
 func (config Config) getDBConfig() *DBConfig {
@@ -73,9 +73,9 @@ func (config Config) getDBConfig() *DBConfig {
 }
 
 var config *Config
-var VK_config *VKConfig
-var APP_config *AppConfig
-var DB_config *DBConfig
+var VkConfig *VKConfig
+var AppConfig *APPConfig
+var DbConfig *DBConfig
 
 func ReadConfig() error {
 	f, err := os.Open("config.yaml")
@@ -92,8 +92,8 @@ func ReadConfig() error {
 	}
 
 	config = &cfg
-	VK_config = config.getVKConfig()
-	APP_config = config.getAppConfig()
-	DB_config = config.getDBConfig()
+	VkConfig = config.getVKConfig()
+	AppConfig = config.getAppConfig()
+	DbConfig = config.getDBConfig()
 	return nil
 }

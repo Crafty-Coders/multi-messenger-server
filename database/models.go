@@ -14,18 +14,18 @@ type User struct {
 
 type VKSession struct {
 	gorm.Model
-	Id           uint64 `gorm:"primaryKey;autoIncrement:true"`
-	User_id      uint64
-	VkId         uint64
-	Access_token string
-	Expires      time.Time
+	Id          uint64 `gorm:"primaryKey;autoIncrement:true"`
+	UserId      uint64
+	VkId        uint64
+	AccessToken string
+	Expires     time.Time
 }
 
 type AuthSession struct {
 	gorm.Model
-	Id            uint64 `gorm:"primaryKey;autoIncrement:true"`
-	Access_token  string
-	Refresh_token string
-	User_id       uint64
-	Session_start time.Time
+	Id           uint64 `gorm:"primaryKey;autoIncrement:true"`
+	AccessToken  string
+	RefreshToken string
+	UserId       uint64
+	SessionStart time.Time
 }
