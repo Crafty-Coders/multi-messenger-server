@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"multi-messenger-server/VK"
 	"multi-messenger-server/auth"
 	"multi-messenger-server/tools"
@@ -10,7 +11,7 @@ import (
 func HandlerVkAuth(w http.ResponseWriter, r *http.Request) {
 	body, err := tools.ParseBody(r.Body)
 	if err != nil {
-		w.WriteHeader(tools.Bad_request)
+		w.WriteHeader(tools.BadRequest)
 		return
 	}
 
@@ -18,7 +19,7 @@ func HandlerVkAuth(w http.ResponseWriter, r *http.Request) {
 	authData, err := VK.GetVKAuthData(authCode)
 
 	if err != nil {
-		w.WriteHeader(tools.Internal_server_error)
+		w.WriteHeader(tools.InternalServerError)
 		return
 	}
 
@@ -29,24 +30,30 @@ func HandlerVkAuth(w http.ResponseWriter, r *http.Request) {
 	user, err := VK.GetVkUser(accessToken, userId)
 
 	if err != nil {
-		w.WriteHeader(tools.Bad_request)
+		w.WriteHeader(tools.BadRequest)
 		return
 	}
 	w.WriteHeader(tools.Ok)
-	w.Write(tools.EncodeJson(user))
+	_, err = w.Write(tools.EncodeJson(user))
+	if err != nil {
+		fmt.Println("Error writing response:\n", err)
+	}
 }
 
 func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 
 	body, err := tools.ParseBody(r.Body)
 	if err != nil {
-		w.WriteHeader(tools.Bad_request)
+		w.WriteHeader(tools.BadRequest)
 		return
 	}
 	if val, ok := body["refresh_token"]; ok {
 		response := auth.Login("", "", val.(string))
 		w.WriteHeader(response["status"].(int))
-		w.Write(tools.EncodeJson(response["data"].(map[string]interface{})))
+		_, err = w.Write(tools.EncodeJson(response["data"].(map[string]interface{})))
+		if err != nil {
+			fmt.Println("Error writing response:\n", err)
+		}
 		return
 	}
 	password, okp := body["password"]
@@ -54,16 +61,19 @@ func HandlerLogin(w http.ResponseWriter, r *http.Request) {
 	if okl && okp {
 		response := auth.Login(login.(string), password.(string), "")
 		w.WriteHeader(response["status"].(int))
-		w.Write(tools.EncodeJson(response["data"].(map[string]interface{})))
+		_, err = w.Write(tools.EncodeJson(response["data"].(map[string]interface{})))
+		if err != nil {
+			fmt.Println("Error writing response:\n", err)
+		}
 		return
 	}
-	w.WriteHeader(tools.Bad_request)
+	w.WriteHeader(tools.BadRequest)
 }
 
 func HandlerRegister(w http.ResponseWriter, r *http.Request) {
 	body, err := tools.ParseBody(r.Body)
 	if err != nil {
-		w.WriteHeader(tools.Bad_request)
+		w.WriteHeader(tools.BadRequest)
 		return
 	}
 	password, okp := body["password"]
@@ -71,8 +81,11 @@ func HandlerRegister(w http.ResponseWriter, r *http.Request) {
 	if okl && okp {
 		response := auth.Register(login.(string), password.(string))
 		w.WriteHeader(response["status"].(int))
-		w.Write(tools.EncodeJson(response["data"].(map[string]interface{})))
+		_, err := w.Write(tools.EncodeJson(response["data"].(map[string]interface{})))
+		if err != nil {
+			fmt.Println("Error writing response:\n", err)
+		}
 		return
 	}
-	w.WriteHeader(tools.Bad_request)
+	w.WriteHeader(tools.BadRequest)
 }

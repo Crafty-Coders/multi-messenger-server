@@ -30,5 +30,6 @@ func main() {
 	mux.HandleFunc("/register", server.HandlerRegister)
 
 	handler := cors.Default().Handler(mux)
-	http.ListenAndServe(":5001", handler)
+	err := http.ListenAndServe(":5001", handler)
+	fmt.Println("Error listening server:\n", err)
 }

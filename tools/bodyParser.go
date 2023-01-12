@@ -11,6 +11,9 @@ func ParseBody(body io.ReadCloser) (map[string]interface{}, error) {
 		return nil, err
 	}
 	var bodyMap map[string]interface{}
-	json.Unmarshal(parsedBody, &bodyMap)
+	err = json.Unmarshal(parsedBody, &bodyMap)
+	if err != nil {
+		return nil, err
+	}
 	return bodyMap, nil
 }

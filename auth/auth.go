@@ -26,7 +26,7 @@ func Register(login string, password string) map[string]interface{} {
 
 	if len(users) > 0 {
 		return map[string]interface{}{
-			"status": tools.Bad_request,
+			"status": tools.BadRequest,
 			"data": map[string]interface{}{
 				"message": "Already exists",
 			},
@@ -84,7 +84,7 @@ func sessionRefresh(refreshToken string) map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"status": tools.Not_found,
+		"status": tools.NotFound,
 		"data": map[string]interface{}{
 			"message": "Session not found",
 		},
@@ -119,7 +119,7 @@ func sessionStart(login string, password string) map[string]interface{} {
 	}
 
 	return map[string]interface{}{
-		"status": tools.Not_found,
+		"status": tools.NotFound,
 		"data": map[string]interface{}{
 			"message": "User not found",
 		},

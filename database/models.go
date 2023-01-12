@@ -29,3 +29,15 @@ type AuthSession struct {
 	UserId       uint64
 	SessionStart time.Time
 }
+
+func (User) TableName() string {
+	return "users"
+}
+
+func (VKSession) TableName() string {
+	return "vk_sessions"
+}
+
+func (AuthSession) TableName() string {
+	return "auth_sessions"
+}

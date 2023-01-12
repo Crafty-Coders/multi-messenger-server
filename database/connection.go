@@ -29,3 +29,18 @@ func ConnectDB() error {
 	DB = db
 	return nil
 }
+
+func CreateTables() {
+	err := DB.AutoMigrate(&User{})
+	if err != nil {
+		return
+	}
+	err = DB.AutoMigrate(&AuthSession{})
+	if err != nil {
+		return
+	}
+	err = DB.AutoMigrate(&VKSession{})
+	if err != nil {
+		return
+	}
+}

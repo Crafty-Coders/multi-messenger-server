@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"os"
 )
@@ -82,7 +83,11 @@ func ReadConfig() error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer func(f *os.File) {
+		if err := f.Close(); err != nil {
+			fmt.Println("Error closing config:\n", err)
+		}
+	}(f)
 
 	var cfg Config
 	decoder := yaml.NewDecoder(f)
