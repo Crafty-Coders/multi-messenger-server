@@ -10,10 +10,7 @@ func ErrorJsonBytes(errorCode int) []byte {
 	return errBytes
 }
 
-func EncodeJson(data map[string]interface{}, defaultErrorCode int) []byte {
-	b, err := json.Marshal(data)
-	if err != nil {
-		return ErrorJsonBytes(defaultErrorCode)
-	}
+func EncodeJson(data map[string]interface{}) []byte {
+	b, _ := json.Marshal(data)
 	return b
 }

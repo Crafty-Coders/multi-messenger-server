@@ -26,8 +26,10 @@ func Register(login string, password string) map[string]interface{} {
 
 	if len(users) > 0 {
 		return map[string]interface{}{
-			"status":  tools.Bad_request,
-			"message": "Already exists",
+			"status": tools.Bad_request,
+			"data": map[string]interface{}{
+				"message": "Already exists",
+			},
 		}
 	}
 
@@ -49,8 +51,10 @@ func Login(login string, password string, refresh_token string) map[string]inter
 		return sessionRefresh(refresh_token)
 	}
 	return map[string]interface{}{
-		"status":  tools.Unauthorized,
-		"message": "Invalid credentials",
+		"status": tools.Unauthorized,
+		"data": map[string]interface{}{
+			"message": "Invalid credentials",
+		},
 	}
 }
 
@@ -71,15 +75,19 @@ func sessionRefresh(refresh_token string) map[string]interface{} {
 		})
 
 		return map[string]interface{}{
-			"status":        tools.Ok,
-			"access_token":  access_token,
-			"refresh_token": new_refresh_token,
+			"status": tools.Ok,
+			"data": map[string]interface{}{
+				"access_token":  access_token,
+				"refresh_token": new_refresh_token,
+			},
 		}
 	}
 
 	return map[string]interface{}{
-		"status":  tools.Not_found,
-		"message": "Session not found",
+		"status": tools.Not_found,
+		"data": map[string]interface{}{
+			"message": "Session not found",
+		},
 	}
 }
 
@@ -102,14 +110,18 @@ func sessionStart(login string, password string) map[string]interface{} {
 		database.DB.Create(&session)
 
 		return map[string]interface{}{
-			"status":        tools.Ok,
-			"access_token":  access_token,
-			"refresh_token": refresh_token,
+			"status": tools.Ok,
+			"data": map[string]interface{}{
+				"access_token":  access_token,
+				"refresh_token": refresh_token,
+			},
 		}
 	}
 
 	return map[string]interface{}{
-		"status":  tools.Not_found,
-		"message": "User not found",
+		"status": tools.Not_found,
+		"data": map[string]interface{}{
+			"message": "User not found",
+		},
 	}
 }
