@@ -1,8 +1,6 @@
 package tools
 
 import (
-	"encoding/json"
-	"io"
 	"net/http"
 	"strings"
 	"text/template"
@@ -17,16 +15,6 @@ func GetTextFromTemplate(tmp string, data map[string]interface{}) (string, error
 	}
 	url := builder.String()
 	return url, nil
-}
-
-func ParseBody(body io.ReadCloser) (map[string]interface{}, error) {
-	parsedBody, err := io.ReadAll(body)
-	if err != nil {
-		return nil, err
-	}
-	var bodyMap map[string]interface{}
-	json.Unmarshal(parsedBody, &bodyMap)
-	return bodyMap, nil
 }
 
 func CreateGETQueryFromTemplate(tmp string, data map[string]interface{}) (map[string]interface{}, error) {
