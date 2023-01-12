@@ -43,12 +43,12 @@ func Register(login string, password string) map[string]interface{} {
 	return sessionStart(login, password)
 }
 
-func Login(login string, password string, refresh_token string) map[string]interface{} {
+func Login(login string, password string, refreshToken string) map[string]interface{} {
 	if password != "" && login != "" {
 		return sessionStart(login, password)
 	}
-	if refresh_token != "" {
-		return sessionRefresh(refresh_token)
+	if refreshToken != "" {
+		return sessionRefresh(refreshToken)
 	}
 	return map[string]interface{}{
 		"status": tools.Unauthorized,
@@ -58,27 +58,27 @@ func Login(login string, password string, refresh_token string) map[string]inter
 	}
 }
 
-func sessionRefresh(refresh_token string) map[string]interface{} {
+func sessionRefresh(refreshToken string) map[string]interface{} {
 
 	var sessions []database.AuthSession
 
-	database.DB.Where("Refresh_token = ?", refresh_token).Limit(1).Find(&sessions)
+	database.DB.Where("Refresh_token = ?", refreshToken).Limit(1).Find(&sessions)
 
 	if len(sessions) > 0 {
 		session := sessions[0]
-		access_token := generateToken()
-		new_refresh_token := generateToken()
+		accessToken := generateToken()
+		newRefreshToken := generateToken()
 		database.DB.Model(&session).Updates(database.AuthSession{
-			Refresh_token: new_refresh_token,
-			Access_token:  access_token,
+			Refresh_token: newRefreshToken,
+			Access_token:  accessToken,
 			Session_start: time.Now(),
 		})
 
 		return map[string]interface{}{
 			"status": tools.Ok,
 			"data": map[string]interface{}{
-				"access_token":  access_token,
-				"refresh_token": new_refresh_token,
+				"access_token":  accessToken,
+				"refresh_token": newRefreshToken,
 			},
 		}
 	}
@@ -98,13 +98,13 @@ func sessionStart(login string, password string) map[string]interface{} {
 	database.DB.Where("Login = ? AND Password = ?", login, password).Find(&users)
 
 	for _, u := range users {
-		user_id := u.Id
-		access_token := generateToken()
-		refresh_token := generateToken()
+		userId := u.Id
+		accessToken := generateToken()
+		refreshToken := generateToken()
 		session := database.AuthSession{
-			Access_token:  access_token,
-			Refresh_token: refresh_token,
-			User_id:       user_id,
+			Access_token:  accessToken,
+			Refresh_token: refreshToken,
+			User_id:       userId,
 			Session_start: time.Now(),
 		}
 		database.DB.Create(&session)
@@ -112,8 +112,8 @@ func sessionStart(login string, password string) map[string]interface{} {
 		return map[string]interface{}{
 			"status": tools.Ok,
 			"data": map[string]interface{}{
-				"access_token":  access_token,
-				"refresh_token": refresh_token,
+				"access_token":  accessToken,
+				"refresh_token": refreshToken,
 			},
 		}
 	}
