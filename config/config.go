@@ -6,11 +6,6 @@ import (
 	"os"
 )
 
-type VKConfig struct {
-	ClientId     string
-	ClientSecret string
-}
-
 type APPConfig struct {
 	ServerUrl string
 	FrontUrl  string
@@ -26,10 +21,6 @@ type DBConfig struct {
 
 type Config struct {
 	ENV string `yaml:"ENV"`
-	VK  struct {
-		ClientId     string `yaml:"CLIENT_ID"`
-		ClientSecret string `yaml:"CLIENT_SECRET"`
-	} `yaml:"VK"`
 	APP struct {
 		ServerUrlDev  string `yaml:"SERVER_URL_DEV"`
 		ServerUrlProd string `yaml:"SERVER_URL_PROD"`
@@ -45,12 +36,6 @@ type Config struct {
 	} `yaml:"DB"`
 }
 
-func (config Config) getVKConfig() *VKConfig {
-	return &VKConfig{
-		config.VK.ClientId,
-		config.VK.ClientSecret,
-	}
-}
 func (config Config) getAppConfig() *APPConfig {
 	if config.ENV == "DEV" {
 		return &APPConfig{
@@ -74,7 +59,6 @@ func (config Config) getDBConfig() *DBConfig {
 }
 
 var config *Config
-var VkConfig *VKConfig
 var AppConfig *APPConfig
 var DbConfig *DBConfig
 
@@ -97,7 +81,6 @@ func ReadConfig() error {
 	}
 
 	config = &cfg
-	VkConfig = config.getVKConfig()
 	AppConfig = config.getAppConfig()
 	DbConfig = config.getDBConfig()
 	return nil

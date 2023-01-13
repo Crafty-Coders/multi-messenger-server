@@ -23,7 +23,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/vk_auth", server.HandlerVkAuth)
+	mux.HandleFunc("/vk_access_token", server.HandlerVkAuth)
 
 	mux.HandleFunc("/login", server.HandlerLogin)
 

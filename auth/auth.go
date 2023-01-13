@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"math/rand"
 	"multi-messenger-server/database"
 	"multi-messenger-server/tools"
@@ -33,14 +34,30 @@ func Register(login string, password string) map[string]interface{} {
 		}
 	}
 
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), 10)
+
+	if err != nil {
+		return map[string]interface{}{
+			"status": tools.InternalServerError,
+			"data": map[string]interface{}{
+				"message": "Err",
+			},
+		}
+	}
+
 	user := database.User{
 		Login:    login,
-		Password: password,
+		Password: string(hashedPassword),
 	}
 
 	database.DB.Create(&user)
 
 	return sessionStart(login, password)
+}
+
+func clearSessions(userId uint64) {
+	session := database.AuthSession{UserId: userId}
+	database.DB.Delete(session)
 }
 
 func Login(login string, password string, refreshToken string) map[string]interface{} {
@@ -62,7 +79,7 @@ func sessionRefresh(refreshToken string) map[string]interface{} {
 
 	var sessions []database.AuthSession
 
-	database.DB.Where("RefreshToken = ?", refreshToken).Limit(1).Find(&sessions)
+	database.DB.Where("refresh_token = ?", refreshToken).Limit(1).Find(&sessions)
 
 	if len(sessions) > 0 {
 		session := sessions[0]
@@ -79,6 +96,9 @@ func sessionRefresh(refreshToken string) map[string]interface{} {
 			"data": map[string]interface{}{
 				"access_token":  accessToken,
 				"refresh_token": newRefreshToken,
+				"user": map[string]interface{}{
+					"id": session.UserId,
+				},
 			},
 		}
 	}
@@ -95,12 +115,21 @@ func sessionStart(login string, password string) map[string]interface{} {
 
 	var users []database.User
 
-	database.DB.Where("Login = ? AND Password = ?", login, password).Find(&users)
+	database.DB.Where("Login = ?", login).Find(&users)
 
 	for _, u := range users {
+		if bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password)) != nil {
+			return map[string]interface{}{
+				"status": tools.Unauthorized,
+				"data": map[string]interface{}{
+					"message": "Incorrect password",
+				},
+			}
+		}
 		userId := u.Id
 		accessToken := generateToken()
 		refreshToken := generateToken()
+		clearSessions(userId)
 		session := database.AuthSession{
 			AccessToken:  accessToken,
 			RefreshToken: refreshToken,
@@ -114,6 +143,7 @@ func sessionStart(login string, password string) map[string]interface{} {
 			"data": map[string]interface{}{
 				"access_token":  accessToken,
 				"refresh_token": refreshToken,
+				"user_id":       userId,
 			},
 		}
 	}
