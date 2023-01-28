@@ -2,23 +2,10 @@ package auth
 
 import (
 	"golang.org/x/crypto/bcrypt"
-	"math/rand"
 	"multi-messenger-server/database"
 	"multi-messenger-server/tools"
-	"strings"
 	"time"
 )
-
-func generateToken() string {
-	alphabet := "abcdefghijklmnopqrstuvwxyz"
-	alphabet += strings.ToUpper(alphabet)
-	alphabet += "0123456789"
-	token := ""
-	for i := 0; i < 40; i++ {
-		token += string([]rune(alphabet)[rand.Intn(len(alphabet))])
-	}
-	return token
-}
 
 func Register(login string, password string) map[string]interface{} {
 	var users []database.User
@@ -53,11 +40,6 @@ func Register(login string, password string) map[string]interface{} {
 	database.DB.Create(&user)
 
 	return sessionStart(login, password)
-}
-
-func clearSessions(userId uint64) {
-	session := database.AuthSession{UserId: userId}
-	database.DB.Delete(session)
 }
 
 func Login(login string, password string, refreshToken string) map[string]interface{} {
